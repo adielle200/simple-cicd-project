@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "app" {
       spec {
         container {
           name  = "simple-app"
-          image = "TON_DOCKERHUB/simple-app:latest"
+          image = "adielle200/simple-app:latest"
 
           port {
             container_port = 3000
