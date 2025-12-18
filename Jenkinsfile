@@ -22,7 +22,7 @@ pipeline {
     stage('Push Docker Image') {
       steps {
         sh '''
-        docker login -u adielle200 -p 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
+        docker login -u adielle200 -p $GITHUB_TOKEN
         docker push $DOCKER_IMAGE:latest
         '''
       }
