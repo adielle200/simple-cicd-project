@@ -2,14 +2,14 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE = "TON_DOCKERHUB/simple-app"
+    DOCKER_IMAGE = "adielle200/simple-app"
   }
 
   stages {
 
     stage('Clone Repo') {
       steps {
-        git branch: 'main', url: 'https://github.com/<TON_USERNAME>/simple-cicd-project.git'
+        git branch: 'main', url: 'https://github.com/adielle200/simple-cicd-project.git'
       }
     }
 
@@ -22,7 +22,7 @@ pipeline {
     stage('Push Docker Image') {
       steps {
         sh '''
-        docker login -u TON_USER -p TON_PASSWORD
+        docker login -u adielle200 -p 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
         docker push $DOCKER_IMAGE:latest
         '''
       }
