@@ -1,30 +1,36 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "adielle200/simple-app"
-    }
-
     stages {
 
-        stage('Build Docker Image') {
+        stage('Checkout') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE:latest app'
+                checkout scm
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',   // ← ici
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push $DOCKER_IMAGE:latest
-                    '''
-                }
+                sh '''
+                docker build -t localhost:5000/simple-app:latest app
+                '''
+            }
+        }
+
+        stage('Push to Local Registry') {
+            steps {
+                sh '''
+                docker push localhost:5000/simple-app:latest
+                '''
+            }
+        }
+
+        stage('Run Container (optional)') {
+            steps {
+                sh '''
+                docker rm -f simple-app || true
+                docker run -d -p 3000:3000 --name simple-app localhost:5000/simple-app:latest
+                '''
             }
         }
     }
