@@ -28,8 +28,11 @@ pipeline {
         stage('Run Container (optional)') {
             steps {
                 sh '''
+                # Supprime le conteneur s'il existe (sécurisé)
                 docker rm -f simple-app || true
-                docker run -d -p 3000:3000 --name simple-app localhost:5000/simple-app:latest
+
+                # Lance le conteneur sur un port libre (3001) pour éviter le conflit avec Grafana
+                docker run -d -p 3001:3000 --name simple-app localhost:5000/simple-app:latest
                 '''
             }
         }
