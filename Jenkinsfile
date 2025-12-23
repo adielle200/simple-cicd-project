@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "localhost:5000/simple-app:latest"
+        # On ne met plus localhost:5000 car kind ne peut pas accéder au registry localhost
+        IMAGE_NAME = "simple-app:latest"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
     }
 
     stages {
@@ -16,15 +18,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
+                # Build l'image
                 docker build -t $IMAGE_NAME app
-                '''
-            }
-        }
 
-        stage('Push to Local Registry') {
-            steps {
-                sh '''
-                docker push $IMAGE_NAME
+                # Charge l'image dans le cluster kind
+                kind load docker-image $IMAGE_NAME --name mon-cluster
                 '''
             }
         }
@@ -32,6 +30,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
+                # Applique le déploiement et le service
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
                 '''
