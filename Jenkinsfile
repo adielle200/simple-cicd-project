@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        # On ne met plus localhost:5000 car kind ne peut pas accéder au registry localhost
+        // On ne met plus localhost:5000 car kind ne peut pas accéder au registry localhost
         IMAGE_NAME = "simple-app:latest"
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
     }
