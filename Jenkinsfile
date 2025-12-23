@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "localhost:5000/simple-app:latest"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -12,7 +16,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t localhost:5000/simple-app:latest app
+                docker build -t $IMAGE_NAME app
                 '''
             }
         }
@@ -20,19 +24,16 @@ pipeline {
         stage('Push to Local Registry') {
             steps {
                 sh '''
-                docker push localhost:5000/simple-app:latest
+                docker push $IMAGE_NAME
                 '''
             }
         }
 
-        stage('Run Container (optional)') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                # Supprime le conteneur s'il existe (sécurisé)
-                docker rm -f simple-app || true
-
-                # Lance le conteneur sur un port libre (3001) pour éviter le conflit avec Grafana
-                docker run -d -p 3001:3000 --name simple-app localhost:5000/simple-app:latest
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
                 '''
             }
         }
