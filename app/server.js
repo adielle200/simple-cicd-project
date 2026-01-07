@@ -1,11 +1,37 @@
 const http = require('http');
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200);
-  res.end("Hello from CI/CD Pipeline 🚀");
+// Fonction pour parser le body JSON d'une requête POST
+const parseBody = (req) => {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => body += chunk.toString());
+    req.on('end', () => {
+      try {
+        resolve(JSON.parse(body || '{}'));
+      } catch (err) {
+        resolve({ raw: body });
+      }
+    });
+  });
+};
+
+const server = http.createServer(async (req, res) => {
+  // Toujours renvoyer 200 OK
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+
+  if (req.method === 'GET') {
+    res.end(JSON.stringify({ message: "Hello from CI/CD Pipeline 🚀 (GET OK)" }));
+  } else if (req.method === 'POST') {
+    const data = await parseBody(req);
+    console.log("Received POST data:", data);
+    res.end(JSON.stringify({ message: "POST received", received: data }));
+  } else {
+    res.end(JSON.stringify({ message: "Method not handled, but still 200 OK" }));
+  }
 });
 
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
