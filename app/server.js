@@ -20,7 +20,7 @@ const server = http.createServer(async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
 
   if (req.method === 'GET') {
-    res.end(JSON.stringify({ message: "Hello from CI/CD Pipeline 🚀3 (GET OK)" }));
+    res.end(JSON.stringify({ message: "Hello from CI/CD Pipeline 🚀4 (GET OK)" }));
   } else if (req.method === 'POST') {
     const data = await parseBody(req);
     console.log("Received POST data:", data);
