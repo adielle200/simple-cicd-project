@@ -3,10 +3,12 @@ kind: Service
 metadata:
   name: simple-app-service
 spec:
+  type: NodePort          # Expose le service sur la machine hôte
   selector:
     app: simple-app
   ports:
-    - port: 80
-      targetPort: 3001
-  type: NodePort
+    - protocol: TCP
+      port: 3001          # Port interne du service
+      targetPort: 3000    # Port sur lequel ton conteneur écoute
+      nodePort: 30001     # Port sur lequel tu peux accéder depuis ton navigateur
 

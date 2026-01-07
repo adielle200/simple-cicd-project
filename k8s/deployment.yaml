@@ -17,5 +17,5 @@ spec:
         - name: simple-app
           image: localhost:5000/simple-app:latest
           ports:
-            - containerPort: 3001
+            - containerPort: 3000
 
